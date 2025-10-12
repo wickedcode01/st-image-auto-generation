@@ -347,7 +347,7 @@ async function handleIncomingMessage() {
     console.log(imgTagRegex, matches)
 
     if(matches.length === 0){
-        toastr.success(message.mes);
+    
     }
     if (matches.length > 0) {
         // 延迟执行图片生成，确保消息首先显示出来
