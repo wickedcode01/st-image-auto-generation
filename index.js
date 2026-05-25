@@ -45,6 +45,23 @@ function escapeHtmlAttribute(value) {
         .replace(/>/g, '&gt;');
 }
 
+/**
+ * Ensures message.extra.image_swipes always exists and is an array.
+ * @param {any} message
+ * @returns {string[]}
+ */
+function ensureImageSwipes(message) {
+    if (!message.extra || typeof message.extra !== 'object') {
+        message.extra = {};
+    }
+
+    if (!Array.isArray(message.extra.image_swipes)) {
+        message.extra.image_swipes = [];
+    }
+
+    return message.extra.image_swipes;
+}
+
 // 默认设置
 const defaultSettings = {
     insertType: INSERT_TYPE.DISABLED,
@@ -383,17 +400,14 @@ async function handleIncomingMessage() {
                     message.extra = {};
                 }
 
-                // 初始化image_swipes数组
-                if (!Array.isArray(message.extra.image_swipes)) {
-                    message.extra.image_swipes = [];
-                }
+                const imageSwipes = ensureImageSwipes(message);
 
                 // 如果已有图片，添加到swipes
                 if (
                     message.extra.image &&
-                    !message.extra.image_swipes.includes(message.extra.image)
+                    !imageSwipes.includes(message.extra.image)
                 ) {
-                    message.extra.image_swipes.push(message.extra.image);
+                    imageSwipes.push(message.extra.image);
                 }
 
                 // 获取消息元素用于稍后更新
@@ -428,8 +442,10 @@ async function handleIncomingMessage() {
                             typeof imageUrl === 'string' &&
                             imageUrl.trim().length > 0
                         ) {
+                            const currentImageSwipes = ensureImageSwipes(message);
+
                             // 添加图片到swipes数组
-                            message.extra.image_swipes.push(imageUrl);
+                            currentImageSwipes.push(imageUrl);
 
                             // 设置第一张图片为主图片，或更新为最新生成的图片
                             message.extra.image = imageUrl;
