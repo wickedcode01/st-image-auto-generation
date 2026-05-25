@@ -1,5 +1,12 @@
 # Sillytavern Image Auto Generation Extension
 
+### Update Notes
+
+#### 1.0.5
+
+- Fixed an issue in "Insert into current message" mode where later images could fail to append when one AI reply contains multiple `<pic prompt="...">` tags.
+- If you are updating from an older version, update the extension from SillyTavern's extension manager and refresh the page to make sure the new script is loaded.
+
 ### Description
 
 This extension automatically generates images when it detects `<pic prompt="...">` tags in AI messages. It seamlessly integrates with SillyTavern's image generation capabilities, allowing your AI characters to include images in their responses.
