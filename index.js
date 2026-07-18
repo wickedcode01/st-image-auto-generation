@@ -65,16 +65,17 @@ function unescapeHtmlAttribute(value) {
 
 /**
  * Converts the <img> tags this extension generated in REPLACE mode back into
- * their original <pic prompt="..."> form. Only tags carrying our data-pic-gen
- * marker are touched, so user/character images are left untouched.
+ * their original tag form (as matched by the user-configured regex). Only tags
+ * carrying our data-pic-gen marker are touched, so user/character images are
+ * left untouched.
  * @param {string} content
  * @returns {string}
  */
 function restorePicTags(content) {
     return content.replace(
         /<img\b[^>]*?\sdata-pic-gen="([^"]*)"[^>]*>/g,
-        (_match, escapedPrompt) =>
-            `<pic prompt="${unescapeHtmlAttribute(escapedPrompt)}">`,
+        (_match, escapedOriginalTag) =>
+            unescapeHtmlAttribute(escapedOriginalTag),
     );
 }
 
@@ -530,7 +531,8 @@ async function handleIncomingMessage() {
                             // Replace it with an actual image tag
                             const escapedUrl = escapeHtmlAttribute(imageUrl);
                             const escapedPrompt = escapeHtmlAttribute(prompt);
-                            const newImageTag = `<img src="${escapedUrl}" title="${escapedPrompt}" alt="${escapedPrompt}" data-pic-gen="${escapedPrompt}">`;
+                            const escapedOriginalTag = escapeHtmlAttribute(originalTag);
+                            const newImageTag = `<img src="${escapedUrl}" title="${escapedPrompt}" alt="${escapedPrompt}" data-pic-gen="${escapedOriginalTag}">`;
                             message.mes = message.mes.replace(
                                 originalTag,
                                 newImageTag,
